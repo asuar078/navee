@@ -6,7 +6,7 @@ import { TaskList } from '@/Components'
 
 const Tasks = () => {
   const taskList = useSelector(
-    (state: { tasks: TaskState }) => state.tasks.TaskList,
+    (state: { tasks: TaskState }) => state.tasks.present.TaskList,
   )
   return <TaskList tasks={taskList} />
 }

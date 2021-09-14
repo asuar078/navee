@@ -11,8 +11,17 @@ export default {
   action: createAction<PayloadInterface>('task/add'),
   reducers(state: TaskState, { payload }: PayloadInterface) {
     console.log(payload)
-    if (payload.title) {
-      state.TaskList = [...state.TaskList, payload]
+    if (!payload.title) {
+      return
     }
+
+    const alreadyExits = state.TaskList.find(
+      item => item.title === payload.title,
+    )
+    if (alreadyExits) {
+      return
+    }
+
+    state.TaskList = [...state.TaskList, payload]
   },
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
-
+import { ActionCreators } from 'redux-undo'
 import { Text, Icon, HStack, Center, Pressable } from 'native-base'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import AddTask from '@/Store/Tasks/AddTask'
@@ -16,6 +16,8 @@ interface FooterButtonProps {
 }
 
 const FooterButton = (props: FooterButtonProps) => {
+  const dispatch = useDispatch()
+
   return (
     <Pressable
       // cursor="pointer"
@@ -40,7 +42,11 @@ const FooterButton = (props: FooterButtonProps) => {
   )
 }
 
-const Footer = () => {
+interface FooterProps {
+  tasks: TaskItem[]
+}
+
+const Footer = (props: FooterProps) => {
   const [showModal, setShowModal] = useState(false)
   const dispatch = useDispatch()
   return (
@@ -52,18 +58,25 @@ const Footer = () => {
           onClicked={() => setShowModal(true)}
         />
         <FooterButton
-          label={'Rename List'}
-          iconName={'edit'}
-          onClicked={() => setShowModal(true)}
+          label={'Undo'}
+          iconName={'undo'}
+          onClicked={() => dispatch(ActionCreators.undo())}
+        />
+        <FooterButton
+          label={'Redo'}
+          iconName={'repeat'}
+          onClicked={() => dispatch(ActionCreators.redo())}
         />
       </HStack>
       <NewTaskModal
         showModal={showModal}
         onSave={(item: TaskItem) => {
+          // @ts-ignore
           dispatch(AddTask.action(item))
           setShowModal(false)
         }}
         onClose={() => setShowModal(false)}
+        tasks={props.tasks}
       />
     </>
   )

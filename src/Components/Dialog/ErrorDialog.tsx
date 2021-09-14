@@ -17,12 +17,9 @@ const ErrorDialog = (props: ErrorDialogProps) => {
         leastDestructiveRef={cancelRef}
         isOpen={props.show}
         onClose={() => props.onClose()}
-        motionPreset={'fade'}
       >
         <AlertDialog.Content>
-          <AlertDialog.Header fontSize="lg" fontWeight="bold">
-            {props.header}
-          </AlertDialog.Header>
+          <AlertDialog.Header>{props.header}</AlertDialog.Header>
           <AlertDialog.Body>{props.body}</AlertDialog.Body>
           <AlertDialog.Footer>
             <Button ref={cancelRef} onPress={() => props.onClose()}>

@@ -1,5 +1,7 @@
 import moment, { DurationInputArg2 } from 'moment'
 
+export const TITLE_CHAR_LIMIT = 18
+
 export interface TaskItem {
   title: string
   startDate: Date | string
@@ -59,4 +61,14 @@ export const makeTaskItem = (
   newItem.nextDue = computeNextDueDate(newItem)
 
   return newItem
+}
+
+export function isNumeric(str: any): boolean {
+  if (typeof str != 'string') {
+    return false
+  } // we only process strings!
+  return (
+    !isNaN(Number(str)) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+    !isNaN(parseFloat(str))
+  ) // ...and ensure strings of whitespace fail
 }

@@ -12,25 +12,23 @@ import {
 } from 'native-base'
 import DateTimePicker, { Event } from '@react-native-community/datetimepicker'
 import { useState, useEffect } from 'react'
-import { makeTaskItem, TaskItem, TimeInterval } from '@/Components/TaskType'
+import {
+  makeTaskItem,
+  TaskItem,
+  TimeInterval,
+  TITLE_CHAR_LIMIT,
+  isNumeric,
+} from '@/Components/TaskType'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import moment from 'moment'
+
 import ErrorAlert from '@/Components/Alert/ErrorAlert'
 
 export interface TaskModalProps {
   showModal: boolean
   onSave: (item: TaskItem) => void
   onClose: () => void
-}
-
-function isNumeric(str: any): boolean {
-  if (typeof str != 'string') {
-    return false
-  } // we only process strings!
-  return (
-    !isNaN(Number(str)) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
-    !isNaN(parseFloat(str))
-  ) // ...and ensure strings of whitespace fail
+  tasks: TaskItem[]
 }
 
 const NewTaskModal = (props: TaskModalProps) => {
@@ -52,6 +50,11 @@ const NewTaskModal = (props: TaskModalProps) => {
     setTaskName('')
     setTimeInterval(TimeInterval.Days)
     setRepeat('1')
+    setDate(new Date(Date.now()))
+    setErrorAlert({
+      ...errorAlert,
+      show: false,
+    })
   }, [props.showModal])
 
   const closeErrorAlert = () => {
@@ -62,7 +65,7 @@ const NewTaskModal = (props: TaskModalProps) => {
   }
 
   const calenderDatePicker = () => {
-    console.log(`show date picker: ${showDatePicker}`)
+    // console.log(`show date picker: ${showDatePicker}`)
     if (showDatePicker) {
       return (
         <DateTimePicker
@@ -73,7 +76,7 @@ const NewTaskModal = (props: TaskModalProps) => {
           display="default"
           minimumDate={new Date(Date.now())}
           onChange={(event: Event, selectedDate?: Date) => {
-            console.log(`calender event: ${event.type}`)
+            // console.log(`calender event: ${event.type}`)
             setShowDatePicker(false)
 
             if (event.type === 'set') {
@@ -96,7 +99,7 @@ const NewTaskModal = (props: TaskModalProps) => {
           <Modal.Header>Create New Task</Modal.Header>
           <Modal.Body>
             <FormControl>
-              <Stack space={4} px={4} safeArea mt={6}>
+              <Stack space={3} px={4} safeArea mt={6}>
                 <ErrorAlert
                   body={errorAlert.body}
                   show={errorAlert.show}
@@ -108,6 +111,10 @@ const NewTaskModal = (props: TaskModalProps) => {
                   value={taskName}
                   onChangeText={(event: any) => {
                     // console.log(event)
+                    if (event.length > TITLE_CHAR_LIMIT) {
+                      return
+                    }
+
                     setTaskName(event)
                   }}
                   isInvalid={taskName === ''}
@@ -118,9 +125,9 @@ const NewTaskModal = (props: TaskModalProps) => {
                     value={repeat}
                     keyboardType="numeric"
                     onChangeText={(event: string) => {
-                      console.log(`changing to ${event}`)
+                      // console.log(`changing to ${event}`)
                       const isNum = isNumeric(event) || event === ''
-                      console.log(`received: ${event}, isNum: ${isNum}`)
+                      // console.log(`received: ${event}, isNum: ${isNum}`)
                       if (isNum) {
                         setRepeat(event)
                       }
@@ -161,7 +168,7 @@ const NewTaskModal = (props: TaskModalProps) => {
                   startIcon={<Icon as={FontAwesome} name="calendar" size={5} />}
                   colorScheme="emerald"
                   onPress={() => {
-                    console.log('enter date pressed')
+                    // console.log('enter date pressed')
                     setShowDatePicker(true)
                   }}
                 >
@@ -189,6 +196,18 @@ const NewTaskModal = (props: TaskModalProps) => {
                       ...errorAlert,
                       show: true,
                       body: 'Repeat interval not valid',
+                    })
+                    return
+                  }
+
+                  const alreadyExits = props.tasks.find(
+                    item => item.title === taskName,
+                  )
+                  if (alreadyExits) {
+                    setErrorAlert({
+                      ...errorAlert,
+                      show: true,
+                      body: 'Task name already exits',
                     })
                     return
                   }
