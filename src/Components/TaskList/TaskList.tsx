@@ -18,13 +18,16 @@ import { Pressable } from 'react-native'
 import moment from 'moment'
 import { useDispatch } from 'react-redux'
 import CompleteTask from '@/Store/Tasks/CompleteTask'
+import EditTask from '@/Store/Tasks/EditTask'
 import TaskDetailModal from '@/Components/Model/TaskDetails'
+import EditTaskModal from '@/Components/Model/EditTask'
 
 interface TaskCallBacks {
   detailCallback: (item: TaskItem) => void
+  editCallBack: (item: TaskItem) => void
 }
 
-const appendTask = (item: TaskItem, itemI: number, callback: TaskCallBacks) => {
+const AppendTask = (item: TaskItem, itemI: number, callback: TaskCallBacks) => {
   const dispatch = useDispatch()
   const toast = useToast()
 
@@ -34,6 +37,9 @@ const appendTask = (item: TaskItem, itemI: number, callback: TaskCallBacks) => {
     const timeLeft = nextDue.diff(today, 'days')
     if (timeLeft <= 1) {
       return 'rose.700'
+    }
+    if (timeLeft <= 7) {
+      return 'orange.400'
     } else {
     }
     return 'emerald.800'
@@ -85,7 +91,9 @@ const appendTask = (item: TaskItem, itemI: number, callback: TaskCallBacks) => {
       <IconButton
         colorScheme="emerald"
         icon={<Icon as={FontAwesome} name="pencil" />}
-        // onPress={() => handleDelete(itemI)}
+        onPress={() => {
+          callback.editCallBack(item)
+        }}
       />
     </HStack>
   )
@@ -96,12 +104,21 @@ interface TaskListProps {
 }
 
 const TaskList = (props: TaskListProps) => {
+  const dispatch = useDispatch()
+
   const [detailModal, setDetailModal] = useState<{
     show: boolean
     task: TaskItem | undefined
   }>({
     show: false,
     task: undefined,
+  })
+  const [editModal, setEditModal] = useState<{
+    show: boolean
+    taskIdx: number
+  }>({
+    show: false,
+    taskIdx: 0,
   })
 
   const closeDetailModal = () => {
@@ -116,6 +133,23 @@ const TaskList = (props: TaskListProps) => {
       ...detailModal,
       show: true,
       task: item,
+    })
+  }
+
+  const closeEditModal = () => {
+    setEditModal({
+      ...editModal,
+      show: false,
+    })
+  }
+
+  const showEditModal = (item: TaskItem) => {
+    const idx = props.tasks.findIndex(val => val.title === item.title)
+
+    setEditModal({
+      ...editModal,
+      show: true,
+      taskIdx: idx,
     })
   }
 
@@ -143,19 +177,25 @@ const TaskList = (props: TaskListProps) => {
   // console.log(sortedList)
   return (
     <Center flex={1}>
-      <ScrollView flex={1} w="92%">
-        <VStack space={4} flex={1} w="92%" mt={4}>
+      <ScrollView flex={1} w="95%">
+        <VStack space={4} flex={1} w="95%" mt={4}>
           <Heading color="emerald.400">Don't Forget</Heading>
           <VStack>
             {dueSoon.map((item, itemI) =>
-              appendTask(item, itemI, { detailCallback: showDetailModal }),
+              AppendTask(item, itemI, {
+                detailCallback: showDetailModal,
+                editCallBack: showEditModal,
+              }),
             )}
           </VStack>
           <Divider />
           <Heading color="emerald.400">Upcoming</Heading>
           <VStack>
             {upcoming.map((item, itemI) =>
-              appendTask(item, itemI, { detailCallback: showDetailModal }),
+              AppendTask(item, itemI, {
+                detailCallback: showDetailModal,
+                editCallBack: showEditModal,
+              }),
             )}
           </VStack>
         </VStack>
@@ -165,6 +205,25 @@ const TaskList = (props: TaskListProps) => {
         showModal={detailModal.show}
         task={detailModal.task}
         onClose={closeDetailModal}
+      />
+      <EditTaskModal
+        showModal={editModal.show}
+        onSave={(idx: number, item: TaskItem) => {
+          console.log(`on save for ${idx} ${item.title}`)
+          closeEditModal()
+          dispatch(
+            EditTask.action({
+              idx: idx,
+              newTask: item,
+            }),
+          )
+        }}
+        onDelete={(idx: number) => {
+          console.log(`on delete for ${idx} ${props.tasks[idx].title}`)
+        }}
+        onClose={closeEditModal}
+        tasks={props.tasks}
+        taskIdx={editModal.taskIdx}
       />
     </Center>
   )

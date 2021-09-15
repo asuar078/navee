@@ -2,10 +2,6 @@ import { createAction, PayloadAction } from '@reduxjs/toolkit'
 import { TaskItem, computeNextDueDate } from '@/Components/TaskType'
 import { TaskState } from '@/Store/Tasks'
 
-// interface PayloadInterface {
-//   payload: TaskItem
-// }
-
 export default {
   initialState: {},
   action: createAction<PayloadAction<TaskItem>>('task/complete'),

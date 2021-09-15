@@ -9,7 +9,8 @@
 - [x] Error on repeat task names
 - [ ] Send notification
 - [x] View task info on click
-- [ ] Edit task
+- [x] Edit task
 - [ ] Delete task
 - [x] On complete move due date
 - [ ] Task description or additional information
+- [x] Change color for one week and one day till due

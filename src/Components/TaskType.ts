@@ -1,6 +1,6 @@
 import moment, { DurationInputArg2 } from 'moment'
 
-export const TITLE_CHAR_LIMIT = 18
+export const TITLE_CHAR_LIMIT = 24
 
 export interface TaskItem {
   title: string
@@ -71,4 +71,20 @@ export function isNumeric(str: any): boolean {
     !isNaN(Number(str)) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
     !isNaN(parseFloat(str))
   ) // ...and ensure strings of whitespace fail
+}
+
+export function countSameName(
+  name: string,
+  ignoreIdx: number,
+  tasks: TaskItem[],
+): number {
+  let count = 0
+
+  tasks.forEach((item, itemIdx) => {
+    if (name === item.title && itemIdx !== ignoreIdx) {
+      count++
+    }
+  })
+
+  return count
 }

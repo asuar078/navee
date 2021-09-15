@@ -1,15 +1,11 @@
-import { createAction } from '@reduxjs/toolkit'
+import { createAction, PayloadAction } from '@reduxjs/toolkit'
 import { TaskItem } from '@/Components/TaskType'
 import { TaskState } from '@/Store/Tasks'
 
-interface PayloadInterface {
-  payload: TaskItem
-}
-
 export default {
   initialState: {},
-  action: createAction<PayloadInterface>('task/add'),
-  reducers(state: TaskState, { payload }: PayloadInterface) {
+  action: createAction<PayloadAction<TaskItem>>('task/add'),
+  reducers(state: TaskState, { payload }: PayloadAction<TaskItem>) {
     console.log(payload)
     if (!payload.title) {
       return

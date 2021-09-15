@@ -18,20 +18,23 @@ import {
   TimeInterval,
   TITLE_CHAR_LIMIT,
   isNumeric,
+  countSameName,
 } from '@/Components/TaskType'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import moment from 'moment'
 
 import ErrorAlert from '@/Components/Alert/ErrorAlert'
 
-export interface TaskModalProps {
+export interface EditTaskModalProps {
   showModal: boolean
-  onSave: (item: TaskItem) => void
+  onSave: (idx: number, item: TaskItem) => void
+  onDelete: (idx: number) => void
   onClose: () => void
   tasks: TaskItem[]
+  taskIdx: number
 }
 
-const NewTaskModal = (props: TaskModalProps) => {
+const EditTaskModal = (props: EditTaskModalProps) => {
   const [taskName, setTaskName] = useState<string>('')
   const [timeInterval, setTimeInterval] = useState<TimeInterval>(
     TimeInterval.Days,
@@ -47,10 +50,15 @@ const NewTaskModal = (props: TaskModalProps) => {
   )
 
   useEffect(() => {
-    setTaskName('')
-    setTimeInterval(TimeInterval.Days)
-    setRepeat('1')
-    setDate(new Date(Date.now()))
+    const taskInfo = props.tasks[props.taskIdx]
+    setTaskName(taskInfo.title)
+    setTimeInterval(taskInfo.repeatTimeInterval)
+    setRepeat(taskInfo.repeatNum.toString())
+    if (taskInfo.lastCompleted) {
+      setDate(new Date(taskInfo.lastCompleted))
+    } else {
+      setDate(new Date(taskInfo.startDate))
+    }
     setErrorAlert({
       ...errorAlert,
       show: false,
@@ -96,7 +104,7 @@ const NewTaskModal = (props: TaskModalProps) => {
       <Modal isOpen={props.showModal} onClose={() => props.onClose()}>
         <Modal.Content maxWidth="400px">
           <Modal.CloseButton />
-          <Modal.Header>Create New Task</Modal.Header>
+          <Modal.Header>Edit Task</Modal.Header>
           <Modal.Body>
             <FormControl>
               <Stack space={3} px={4} safeArea mt={6}>
@@ -105,7 +113,7 @@ const NewTaskModal = (props: TaskModalProps) => {
                   show={errorAlert.show}
                   onClose={closeErrorAlert}
                 />
-                <FormControl.Label>Enter task name</FormControl.Label>
+                <FormControl.Label>Change task name</FormControl.Label>
                 <Input
                   placeholder="Task Name"
                   value={taskName}
@@ -125,9 +133,7 @@ const NewTaskModal = (props: TaskModalProps) => {
                     value={repeat}
                     keyboardType="numeric"
                     onChangeText={(event: string) => {
-                      // console.log(`changing to ${event}`)
                       const isNum = isNumeric(event) || event === ''
-                      // console.log(`received: ${event}, isNum: ${isNum}`)
                       if (isNum) {
                         setRepeat(event)
                       }
@@ -161,7 +167,12 @@ const NewTaskModal = (props: TaskModalProps) => {
                   </Select>
                 </HStack>
 
-                <FormControl.Label>Enter start date</FormControl.Label>
+                <FormControl.Label>
+                  {props.tasks[props.taskIdx].lastCompleted
+                    ? 'Change last completed date'
+                    : 'Change start date'}
+                </FormControl.Label>
+
                 <Button
                   startIcon={<Icon as={FontAwesome} name="calendar" size={5} />}
                   colorScheme="emerald"
@@ -173,6 +184,19 @@ const NewTaskModal = (props: TaskModalProps) => {
                   {moment(date).format('MMM DD, YYYY')}
                 </Button>
                 {calenderDatePicker()}
+                <Button
+                  startIcon={<Icon as={FontAwesome} name="trash" size={5} />}
+                  colorScheme="danger"
+                  _text={{
+                    color: 'white',
+                  }}
+                  onPress={() => {
+                    // console.log('enter date pressed')
+                    // setShowDatePicker(true)
+                  }}
+                >
+                  DELETE TASK
+                </Button>
               </Stack>
             </FormControl>
           </Modal.Body>
@@ -198,10 +222,12 @@ const NewTaskModal = (props: TaskModalProps) => {
                     return
                   }
 
-                  const alreadyExits = props.tasks.find(
-                    item => item.title === taskName,
+                  const alreadyExits = countSameName(
+                    taskName,
+                    props.taskIdx,
+                    props.tasks,
                   )
-                  if (alreadyExits) {
+                  if (alreadyExits > 0) {
                     setErrorAlert({
                       ...errorAlert,
                       show: true,
@@ -211,6 +237,7 @@ const NewTaskModal = (props: TaskModalProps) => {
                   }
 
                   props.onSave(
+                    props.taskIdx,
                     makeTaskItem(
                       taskName,
                       date.toDateString(),
@@ -237,4 +264,4 @@ const NewTaskModal = (props: TaskModalProps) => {
   )
 }
 
-export default NewTaskModal
+export default EditTaskModal
