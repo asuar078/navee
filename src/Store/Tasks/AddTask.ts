@@ -6,7 +6,7 @@ export default {
   initialState: {},
   action: createAction<PayloadAction<TaskItem>>('task/add'),
   reducers(state: TaskState, { payload }: PayloadAction<TaskItem>) {
-    console.log(payload)
+    // console.log(payload)
     if (!payload.title) {
       return
     }

@@ -11,6 +11,7 @@ import {
   HStack,
 } from 'native-base'
 import DateTimePicker, { Event } from '@react-native-community/datetimepicker'
+import DeleteDialog from '@/Components/Dialog/DeleteDialog'
 import { useState, useEffect } from 'react'
 import {
   makeTaskItem,
@@ -48,8 +49,12 @@ const EditTaskModal = (props: EditTaskModalProps) => {
       body: '',
     },
   )
+  const [showDelete, setShowDelete] = useState<boolean>(false)
 
   useEffect(() => {
+    if (!props.tasks[props.taskIdx]) {
+      return
+    }
     const taskInfo = props.tasks[props.taskIdx]
     setTaskName(taskInfo.title)
     setTimeInterval(taskInfo.repeatTimeInterval)
@@ -97,6 +102,10 @@ const EditTaskModal = (props: EditTaskModalProps) => {
     } else {
       return <></>
     }
+  }
+
+  if (!props.tasks[props.taskIdx]) {
+    return <></>
   }
 
   return (
@@ -191,8 +200,7 @@ const EditTaskModal = (props: EditTaskModalProps) => {
                     color: 'white',
                   }}
                   onPress={() => {
-                    // console.log('enter date pressed')
-                    // setShowDatePicker(true)
+                    setShowDelete(true)
                   }}
                 >
                   DELETE TASK
@@ -260,6 +268,16 @@ const EditTaskModal = (props: EditTaskModalProps) => {
           </Modal.Footer>
         </Modal.Content>
       </Modal>
+      <DeleteDialog
+        header={'Delete Task'}
+        body={'Are you sure you want to delete task?'}
+        show={showDelete}
+        onDelete={() => {
+          setShowDelete(false)
+          props.onDelete(props.taskIdx)
+        }}
+        onClose={() => setShowDelete(false)}
+      />
     </>
   )
 }

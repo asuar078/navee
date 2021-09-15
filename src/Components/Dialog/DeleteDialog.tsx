@@ -23,7 +23,7 @@ const DeleteDialog = (props: DeleteDialogProps) => {
           <AlertDialog.Header fontSize="lg" fontWeight="bold">
             {props.header}
           </AlertDialog.Header>
-          <AlertDialog.Body>{props.header}</AlertDialog.Body>
+          <AlertDialog.Body>{props.body}</AlertDialog.Body>
           <AlertDialog.Footer>
             <Button ref={cancelRef} onPress={() => props.onClose()}>
               Cancel

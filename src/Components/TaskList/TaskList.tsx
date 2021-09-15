@@ -19,6 +19,7 @@ import moment from 'moment'
 import { useDispatch } from 'react-redux'
 import CompleteTask from '@/Store/Tasks/CompleteTask'
 import EditTask from '@/Store/Tasks/EditTask'
+import DeleteTask from '@/Store/Tasks/DeleteTask'
 import TaskDetailModal from '@/Components/Model/TaskDetails'
 import EditTaskModal from '@/Components/Model/EditTask'
 
@@ -220,6 +221,8 @@ const TaskList = (props: TaskListProps) => {
         }}
         onDelete={(idx: number) => {
           console.log(`on delete for ${idx} ${props.tasks[idx].title}`)
+          closeEditModal()
+          dispatch(DeleteTask.action(idx))
         }}
         onClose={closeEditModal}
         tasks={props.tasks}

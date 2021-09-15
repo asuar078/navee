@@ -13,6 +13,6 @@ export default {
 
     state.TaskList[idx].lastCompleted = new Date(Date.now()).toDateString()
     state.TaskList[idx].nextDue = computeNextDueDate(state.TaskList[idx])
-    console.log(state.TaskList[idx])
+    // console.log(state.TaskList[idx])
   },
 }
