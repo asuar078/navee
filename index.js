@@ -5,9 +5,10 @@
 import { AppRegistry, Platform } from 'react-native'
 import App from './src/App'
 import { name as appName } from './app.json'
+import { Config } from '@/Config'
 
 import PushNotificationIOS from '@react-native-community/push-notification-ios'
-import PushNotification from 'react-native-push-notification'
+import PushNotification, { Importance } from 'react-native-push-notification'
 
 // Must be outside of any component LifeCycle (such as `componentDidMount`).
 PushNotification.configure({
@@ -59,5 +60,18 @@ PushNotification.configure({
    */
   requestPermissions: Platform.OS === 'ios',
 })
+
+PushNotification.createChannel(
+  {
+    channelId: Config.NOTIFICATION_CHANNEL_ID, // (required)
+    channelName: Config.NOTIFICATION_CHANNEL_NAME, // (required)
+    channelDescription: 'A channel receive navee task notifications', // (optional) default: undefined.
+    playSound: true, // (optional) default: true
+    soundName: 'default', // (optional) See `soundName` parameter of `localNotification` function
+    importance: Importance.MIN, // (optional) default: Importance.HIGH. Int value of the Android notification importance
+    vibrate: true, // (optional) default: true. Creates the default vibration pattern if true.
+  },
+  created => console.log(`createChannel returned '${created}'`), // (optional) callback returns whether the channel was created, false means it already existed.
+)
 
 AppRegistry.registerComponent(appName, () => App)

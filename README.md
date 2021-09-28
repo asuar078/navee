@@ -37,7 +37,7 @@ will let you edit any of the task parameters.
 - [x] congratulations toast on complete
 - [ ] Allow multiple task list
 - [x] Error on repeat task names
-- [ ] Send notification
+- [x] Send notification
 - [ ] Allow setting when gets notified about task 
 - [x] View task info on click
 - [x] Edit task

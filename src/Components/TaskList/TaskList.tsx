@@ -22,6 +22,7 @@ import EditTask from '@/Store/Tasks/EditTask'
 import DeleteTask from '@/Store/Tasks/DeleteTask'
 import TaskDetailModal from '@/Components/Model/TaskDetails'
 import EditTaskModal from '@/Components/Model/EditTask'
+import { Config } from '@/Config'
 
 interface TaskCallBacks {
   detailCallback: (item: TaskItem) => void
@@ -39,7 +40,7 @@ const AppendTask = (item: TaskItem, itemI: number, callback: TaskCallBacks) => {
     if (timeLeft <= 1) {
       return 'rose.700'
     }
-    if (timeLeft <= 7) {
+    if (timeLeft <= Config.DAYS_BEFORE_NOTIFICATION) {
       return 'orange.400'
     } else {
     }
@@ -164,14 +165,14 @@ const TaskList = (props: TaskListProps) => {
     const nextDue = moment(new Date(item.nextDue))
     const today = moment(Date.now())
     const timeLeft = nextDue.diff(today, 'days')
-    return timeLeft <= 7
+    return timeLeft <= Config.DAYS_BEFORE_NOTIFICATION
   })
 
   let upcoming = sortedList.filter(item => {
     const nextDue = moment(new Date(item.nextDue))
     const today = moment(Date.now())
     const timeLeft = nextDue.diff(today, 'days')
-    return timeLeft > 7
+    return timeLeft > Config.DAYS_BEFORE_NOTIFICATION
   })
 
   // console.log(dueSoon)
