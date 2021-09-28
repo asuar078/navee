@@ -1,5 +1,5 @@
 export default {
-  welcome: 'Welcome to React Native navee by TheCodingMachine',
+  welcome: 'Welcome to navee a helpful reminder app',
   actions: {
     continue: 'Continue',
   },

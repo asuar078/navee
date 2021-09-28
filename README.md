@@ -38,11 +38,12 @@ will let you edit any of the task parameters.
 - [ ] Allow multiple task list
 - [x] Error on repeat task names
 - [ ] Send notification
+- [ ] Allow setting when gets notified about task 
 - [x] View task info on click
 - [x] Edit task
 - [x] Delete task
 - [x] On complete move due date
 - [ ] Task description or additional information
 - [x] Change color for one week and one day till due
-- [ ] pick app icon
-- [ ] set loading image
+- [x] pick app icon
+- [x] set loading image
