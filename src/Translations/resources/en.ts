@@ -1,5 +1,5 @@
 export default {
-  welcome: 'Welcome to navee a helpful reminder app',
+  welcome: 'Welcome to Navee a helpful reminder app',
   actions: {
     continue: 'Continue',
   },

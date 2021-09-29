@@ -47,3 +47,7 @@ will let you edit any of the task parameters.
 - [x] Change color for one week and one day till due
 - [x] pick app icon
 - [x] set loading image
+- [ ] Complete translations for english and spanish
+- [ ] Add spanish and english toggle
+- [ ] Add a help/instructions section
+- [ ] Add version number
